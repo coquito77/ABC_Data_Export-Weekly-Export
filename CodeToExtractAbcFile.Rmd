@@ -8,7 +8,7 @@ The code below can be used to extrat the ABC file base on data length.  The data
 
 https://www.abc.ca.gov/datport/DataExport.html
 
-# Download the data that is in a zip file
+# Download zip file with the data
 
 ```{r}
 rm(list=ls(all=TRUE)) #start with empty workspace
@@ -40,7 +40,7 @@ summary(data)
 str(data)
 ```
 
-# Export the data to tab separated file for futher analysis
+# Export the data to tab separated file for further analysis
 
 ```{r}
 
