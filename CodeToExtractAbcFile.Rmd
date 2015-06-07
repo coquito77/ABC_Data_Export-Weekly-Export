@@ -11,8 +11,6 @@ startTime <- Sys.time()
 
 temp <- tempfile()
 
-starTime <- Sys.time()
-
 download.file("http://www.abc.ca.gov/datport/ABC_Data_Export.zip",temp)
 con <- unz(temp, "m_tape460.LST")
 data <-  read.fwf(con, fill = TRUE, comment.char = "", 
