@@ -3,7 +3,12 @@ title: "Code to Extract the ABC file"
 output: pdf_document
 ---
 
-The code below can be used to extrat the ABC file base on data length
+The code below can be used to extrat the ABC file base on data length.  The data is located here
+
+
+https://www.abc.ca.gov/datport/DataExport.html
+
+# Download the data that is in a zip file
 
 ```{r}
 rm(list=ls(all=TRUE)) #start with empty workspace
@@ -33,8 +38,11 @@ names(data) <- c("License Type","File Number","License Or Application",
 
 summary(data)
 str(data)
+```
 
-# export the data to a text file that is tab separated
+# Export the data to tab separated file for futher analysis
+
+```{r}
 
 write.table(data, file = "~/ABC_Data_Export-Weekly-Export/ABCdata.txt", sep="\t", row.names = FALSE)
 
