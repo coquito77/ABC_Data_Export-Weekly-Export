@@ -44,7 +44,7 @@ str(data)
 
 ```{r}
 
-write.table(data, file = "~/ABC_Data_Export-Weekly-Export/ABCdata.txt", sep="\t", row.names = FALSE)
+write.table(data, file = "~/ABCdata.txt", sep="\t", row.names = FALSE)
 
 # get the time
 endTime <- Sys.time()
