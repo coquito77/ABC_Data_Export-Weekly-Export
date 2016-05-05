@@ -11,6 +11,7 @@ https://www.abc.ca.gov/datport/DataExport.html
 # Download zip file with the data
 
 ```{r}
+
 rm(list=ls(all=TRUE)) #start with empty workspace
 startTime <- Sys.time()
 
@@ -19,7 +20,9 @@ temp <- tempfile()
 download.file("http://www.abc.ca.gov/datport/ABC_Data_Export.zip",temp)
 con <- unz(temp, "m_tape460.LST")
 data <-  read.fwf(con, fill = TRUE, comment.char = "", 
-  widths = c(2,8,3,8,11,11,8,3,1,2,4,2,50,50,50,25,2,10,50,50,50,25,2,10,16,7))
+                  widths = c(2,8,3,8,11,11,8,3,1,2,4,2,
+                             50,50,50,25,2,10,50,50,50,25,
+                             2,10,16,7))
 unlink(temp)
 
 # add the variable names to the file
@@ -32,17 +35,48 @@ names(data) <- c("License Type","File Number","License Or Application",
                  "Premise Street Address2","Premise City",
                  "Premise State","Premise Zip","DBA name",
                  "Mail Street Address1","Mail Street Address2",
-                 "Mail City","Mail State","Mail Zip","Premise County","Premise Census Tract")
+                 "Mail City","Mail State","Mail Zip",
+                 "Premise County","Premise Census Tract")
 
 # take a look at the file
 
 summary(data)
 str(data)
+
+# extract county codes
+
+library(RCurl)
+library(dplyr)
+
+linkToCountyCodes <- getURL("http://www2.census.gov/geo/docs/reference/codes/files/st06_ca_cou.txt")
+
+CountyCodes <- read.csv(text = linkToCountyCodes,
+                        header = FALSE,
+                        col.names = c("State",
+                                      "StateCode",
+                                      "CountyCode",
+                                      "CountyName",
+                                      "ExtraCode")) %>%
+  mutate(CountyNameCleaned = gsub(" County", 
+                                  "",
+                                  CountyName),
+         CountyNameCleaned =  toupper(CountyNameCleaned),
+         CountyCodePadded = stringr::str_pad(CountyCode, 3,pad = "0"))
+
+# join the sets
+
+data <- data %>%
+  mutate(PremiseCounty = stringr::str_trim( `Premise County`)) %>%
+  left_join(CountyCodes,
+            by = c(PremiseCounty = "CountyNameCleaned"))
+
 ```
 
 # Export the data to tab separated file for further analysis
 
 ```{r}
+
+data <-  data.frame(lapply(data, trimws))
 
 write.table(data, file = "~/ABCdata.txt", sep="\t", row.names = FALSE)
 
